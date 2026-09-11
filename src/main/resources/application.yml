@@ -1,0 +1,7 @@
+Spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/x_synapse?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 2127137114
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
