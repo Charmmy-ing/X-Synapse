@@ -21,7 +21,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(String username, String password) {
-         String repassword= Md5Util.getMD5String(password);
-        userMapper.addUser(username,repassword);
+        String Password= Md5Util.getMD5String(password);
+        userMapper.addUser(username,Password);
+    }
+
+    @Override
+    public void updateUserInfo(User user) {
+        userMapper.update(user);
+    }
+
+    @Override
+    public void updateAvatar(String avatar,String username) {
+        userMapper.updateAvatar(avatar,username);
+    }
+
+    @Override
+    public void updateUserpassword(String username, String password) {
+        userMapper.updatePassword(username,password);
     }
 }

@@ -77,6 +77,34 @@ Apifox → POST /login → Controller → 参数校验 → Service → Mapper �
 3. **调试思维**：通过现象建立假设 → 用日志/数据验证假设，而非盲目改代码
 4. **全局观**：Java、MySQL、ORM、HTTP、业务规则是连在一起的
 
-## 11. 下一步路线图
+#  今天 X-Synapse 问题总结
 
-注册 ✅ → 登录 ✅ → **JWT 身份认证**（下一阶段关键）→ 登录状态维护 → 用户信息接口 → 帖子 → 评论 → 点赞
+@RequestHeader 写错
+@RequestHeader User user
+→ Header 里找 User，错误。
+改：
+@RequestBody User user
+→ 从 JSON Body 获取 User。
+URL 参数 ≠ Body
+/update?username=canlu
+→ @RequestParam
+{"username":"canlu"}
+→ @RequestBody
+没传 username 也返回成功
+username = null
+WHERE username = null 匹配不到数据
+但代码无论如何都 Result.success()
+所以：接口成功 ≠ 数据库真的更新成功
+JDBC 连接异常
+CannotGetJdbcConnectionException
+→ 数据库连接问题，不是 Controller/SQL 逻辑问题。
+JWT
+登录后 JWT 可以保存 userId/username
+后续请求通过 JWT → 拦截器 → ThreadLocal 获取当前用户
+更新用户时就不必让前端传 username
+一句话记忆
+URL 找资源，Header 放请求信息，Body 放业务数据，JWT 负责身份。
+
+## 12. 下一步路线图
+
+注册 ✅ → 登录 ✅ → **JWT 身份认证**（下一阶段关键） ✅→ 登录状态维护 ✅ → 用户信息接口 ✅ → 帖子 → 评论 → 点赞
