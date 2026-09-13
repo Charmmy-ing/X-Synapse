@@ -1,0 +1,9 @@
+<mapper namespace="com.charmmy.bid_event.mapper.ArticleMapper">
+    <select id="list" resultType="com.charmmy.bid_event.pojo.DTO.ArticleDTO">
+        select * from article
+        <where>
+            user_id= #{userId}
+        </where>
+
+    </select>
+</mapper>

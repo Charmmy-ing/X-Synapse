@@ -1,8 +1,11 @@
 package com.charmmy.x_synapse.service;
 
+import com.charmmy.x_synapse.pojo.Result;
 import com.charmmy.x_synapse.pojo.User;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.URL;
+
+import java.util.Map;
 
 public interface UserService {
     User findUserById( String username) ;
@@ -12,5 +15,5 @@ public interface UserService {
 
     void updateAvatar(@URL String avatar,String username);
 
-    void updateUserpassword(String username, String password);
+    Result updateUserpassword(Map<String, String> map);
 }

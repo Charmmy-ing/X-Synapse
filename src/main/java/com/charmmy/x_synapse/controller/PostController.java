@@ -1,17 +1,34 @@
 package com.charmmy.x_synapse.controller;
 
+import com.charmmy.x_synapse.pojo.DTO.PostDTO;
+import com.charmmy.x_synapse.pojo.PageBean;
+import com.charmmy.x_synapse.pojo.Post;
 import com.charmmy.x_synapse.pojo.Result;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.charmmy.x_synapse.service.PostService;
+import com.charmmy.x_synapse.utils.ThreadLocalUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/post")
 public class PostController {
-    @GetMapping("/context")
-    public Result context() {
-        //会先通过拦截器验证JWT令牌，如果验证失败，会返回401错误码
-        //如果验证成功，会继续执行后续的请求处理
-        return Result.success("post context");
+    @Autowired
+    private PostService postService;
+    //添加帖子
+    @PutMapping
+    public Result addPost(@RequestBody PostDTO post) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        Long id = userId.longValue();
+        post.setUserId(id);
+        postService.addPost(post);
+        return Result.success();
+    }
+    //分页获取帖子
+    @GetMapping("/page")
+    public PageBean<PostDTO> getPostPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        PageBean<PostDTO> pageBean = postService.getPostPage(pageNum, pageSize);
     }
 }

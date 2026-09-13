@@ -34,6 +34,7 @@ X Synapse 是一个以 **AI-Native** 为核心理念设计的开源社交内容�
 - 万级 WebSocket 长连接管理
 - Sequence Number 保证群聊消息全局有序
 - 断线重连自动补发错过的消息
+- 保证AI交流时的信息交互速率
 
 ### 🧠 懂你的 AI（社交场景 RAG）
 

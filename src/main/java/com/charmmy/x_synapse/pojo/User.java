@@ -1,6 +1,7 @@
 package com.charmmy.x_synapse.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class User {
     @NonNull
     private Long id;
-    @NonNull
+    @NotEmpty
     private String username;
     @JsonIgnore
     private String password;

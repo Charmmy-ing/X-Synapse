@@ -59,7 +59,7 @@ public class UserController {
         //3.登录成功，返回jwt token
         Map<String, Object> map = new HashMap<>();
         map.put("username", user.getUsername());
-        map.put("password", user.getPassword());
+        map.put("id", user.getId());
         String token = JwtUtil.genToken(map);
         return Result.success(token);
     }
@@ -93,24 +93,8 @@ public class UserController {
     //更新用户密码
     @PostMapping("/updatePassword")
     public Result updatePassword(@RequestBody Map<String, String> map) {
-        String oldPassword = map.get("oldPassword");
-        String newPassword = map.get("newPassword");
-        String newPasswordRepeat = map.get("newPasswordRepeat");
-        if (!newPassword.equals(newPasswordRepeat)) {
-            return Result.error("两次密码输入不一致");
-        }
-        //从ThreadLocal中获取用户信息
-        Map<String, Object> map1 = ThreadLocalUtil.get();
-        String password = (String) map1.get("password");
-        if (password.equals(oldPassword)) {
-            //更新用户密码
-            password = Md5Util.getMD5String(newPassword);
-            String username = (String) map1.get("username");
-            userService.updateUserpassword(username,password);
-        }
-        else{
-            return Result.error("旧密码错误");
-        }
-        return Result.success();
+
+     Result result= userService.updateUserpassword(map);
+        return result;
     }
 }
