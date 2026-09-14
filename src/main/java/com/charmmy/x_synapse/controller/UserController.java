@@ -65,7 +65,7 @@ public class UserController {
     }
 
     //获取用户信息
-    @GetMapping("/UserInfo")
+    @GetMapping("/userInfo")
     public Result getInfo() {
         //从ThreadLocal中获取用户信息
         Map<String, Object> map = ThreadLocalUtil.get();
@@ -75,7 +75,7 @@ public class UserController {
     }
 
     //更新用户信息
-    @PutMapping("/updateUserInfo")
+    @PutMapping("/update")
     //将请求体中的json格式转换为User对象
     public Result updateUserInfo(@RequestBody @Validated User user) {
         userService.updateUserInfo(user);
@@ -91,7 +91,7 @@ public class UserController {
         return Result.success();
     }
     //更新用户密码
-    @PostMapping("/updatePassword")
+    @PostMapping("/updatePwd")
     public Result updatePassword(@RequestBody Map<String, String> map) {
 
      Result result= userService.updateUserpassword(map);

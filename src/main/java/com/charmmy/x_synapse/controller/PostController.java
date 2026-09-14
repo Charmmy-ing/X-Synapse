@@ -17,7 +17,7 @@ public class PostController {
     @Autowired
     private PostService postService;
     //添加帖子
-    @PutMapping
+    @PostMapping
     public Result addPost(@RequestBody PostDTO post) {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
@@ -30,5 +30,6 @@ public class PostController {
     @GetMapping("/page")
     public PageBean<PostDTO> getPostPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         PageBean<PostDTO> pageBean = postService.getPostPage(pageNum, pageSize);
+        return pageBean;
     }
 }
