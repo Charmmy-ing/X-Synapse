@@ -4,23 +4,60 @@ import com.charmmy.x_synapse.mapper.UserMapper;
 import com.charmmy.x_synapse.pojo.Result;
 import com.charmmy.x_synapse.pojo.User;
 import com.charmmy.x_synapse.service.UserService;
+import com.charmmy.x_synapse.utils.JwtUtil;
 import com.charmmy.x_synapse.utils.Md5Util;
 import com.charmmy.x_synapse.utils.ThreadLocalUtil;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private StringRedisTemplate StringRedisTemplate;
 
     @Override
-    public User findUserById(String username) {
+    public String findUserByUsername(String username,String password) {
         User user=userMapper.selectByUsername(username);
+        try {
+            if (user == null) {
+               throw new Exception("用户名不存在");
+            }
+            if (!Md5Util.getMD5String(password).equals(user.getPassword())) {
+                //测试打印出查询到的用户名和密码的，查看是否与数据库中的值一致
+    //            System.out.println(user.getUsername());
+    //            System.out.println(Md5Util.getMD5String(password));
+    //            System.out.println(user.getPassword());
+              throw new Exception("登录失败");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        //3.登录成功，返回jwt token
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", user.getUsername());
+        map.put("id", user.getId());
+        String token = JwtUtil.genToken(map);
+        ValueOperations<String, String> valueOperations = StringRedisTemplate.opsForValue();
+        valueOperations.set("token", token,1, TimeUnit.HOURS);
+        return token;
+    }
+
+    @Override
+    public User findUserById(String username)  {
+        User user=userMapper.selectById(username);
+        if(user==null){
+            return null;
+        }
         return user;
     }
+
 
     @Override
     public void register(String username, String password) {
@@ -56,6 +93,7 @@ public class UserServiceImpl implements UserService {
             return Result.error("新密码不能与旧密码相同");
         }
         userMapper.updatePassword(username,newPassword);
+        StringRedisTemplate.delete("token");
         return Result.success("密码更新成功");
     }
 }

@@ -8,7 +8,8 @@ import org.hibernate.validator.constraints.URL;
 import java.util.Map;
 
 public interface UserService {
-    User findUserById( String username) ;
+    String findUserByUsername(String username,String password);
+    User findUserById( String username);
     void register(String username, String password);
 
     void updateUserInfo(User user);

@@ -7,13 +7,17 @@ import com.charmmy.x_synapse.utils.JwtUtil;
 import com.charmmy.x_synapse.utils.Md5Util;
 import com.charmmy.x_synapse.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
+import org.apache.ibatis.type.NStringTypeHandler;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -22,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    //redis操作
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @PostMapping("/register")
     //校验用户名和密码格式
@@ -45,22 +52,7 @@ public class UserController {
     @PostMapping("/login")
     public Result login(@Pattern(regexp = "^[a-zA-Z0-9]{5,16}$") String username
             , @Pattern(regexp = "^[a-zA-Z0-9]{5,16}$") String password) {
-        User user = userService.findUserById(username);
-        if (user == null) {
-            return Result.error("用户名不存在");
-        }
-        if (!Md5Util.getMD5String(password).equals(user.getPassword())) {
-            //测试打印出查询到的用户名和密码的，查看是否与数据库中的值一致
-//            System.out.println(user.getUsername());
-//            System.out.println(Md5Util.getMD5String(password));
-//            System.out.println(user.getPassword());
-            return Result.error("登录失败");
-        }
-        //3.登录成功，返回jwt token
-        Map<String, Object> map = new HashMap<>();
-        map.put("username", user.getUsername());
-        map.put("id", user.getId());
-        String token = JwtUtil.genToken(map);
+        String token = userService.findUserByUsername(username,password);
         return Result.success(token);
     }
 
@@ -93,7 +85,6 @@ public class UserController {
     //更新用户密码
     @PostMapping("/updatePwd")
     public Result updatePassword(@RequestBody Map<String, String> map) {
-
      Result result= userService.updateUserpassword(map);
         return result;
     }

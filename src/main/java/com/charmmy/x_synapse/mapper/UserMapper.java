@@ -18,4 +18,6 @@ public interface UserMapper {
     void updateAvatar(String avatar,String username);
     @Update("update x_synapse.user set password = #{password} where username = #{username}")
     void updatePassword(String username, String password);
+    @Select("select * from x_synapse.user where username = #{username}")
+    User selectById(String username);
 }
