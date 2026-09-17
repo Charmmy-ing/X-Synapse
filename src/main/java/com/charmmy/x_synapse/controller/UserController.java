@@ -69,8 +69,8 @@ public class UserController {
     //更新用户信息
     @PutMapping("/update")
     //将请求体中的json格式转换为User对象
-    public Result updateUserInfo(@RequestBody @Validated User user) {
-        userService.updateUserInfo(user);
+    public Result updateUserInfo(@RequestBody @Validated User updateUser) {
+        userService.updateUserInfo(updateUser);
         return Result.success();
     }
     //更新用户头像
