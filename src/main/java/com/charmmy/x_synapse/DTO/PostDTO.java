@@ -1,4 +1,4 @@
-package com.charmmy.x_synapse.pojo.DTO;
+package com.charmmy.x_synapse.DTO;
 
 import com.charmmy.x_synapse.anno.State;
 import jakarta.validation.constraints.NotEmpty;

@@ -1,6 +1,6 @@
 package com.charmmy.x_synapse.mapper;
 
-import com.charmmy.x_synapse.pojo.DTO.PostDTO;
+import com.charmmy.x_synapse.DTO.PostDTO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 

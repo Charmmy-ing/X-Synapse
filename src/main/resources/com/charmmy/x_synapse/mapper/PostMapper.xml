@@ -5,7 +5,7 @@
 
 <mapper namespace="com.charmmy.x_synapse.mapper.PostMapper">
 
-    <select id="list" resultType="com.charmmy.x_synapse.pojo.DTO.PostDTO">
+    <select id="list" resultType="com.charmmy.x_synapse.DTO.PostDTO">
         select * from post
         <where>
             user_id = #{userId}

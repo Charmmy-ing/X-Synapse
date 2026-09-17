@@ -1,8 +1,7 @@
 package com.charmmy.x_synapse.controller;
 
-import com.charmmy.x_synapse.pojo.DTO.PostDTO;
+import com.charmmy.x_synapse.DTO.PostDTO;
 import com.charmmy.x_synapse.pojo.PageBean;
-import com.charmmy.x_synapse.pojo.Post;
 import com.charmmy.x_synapse.pojo.Result;
 import com.charmmy.x_synapse.service.PostService;
 import com.charmmy.x_synapse.utils.ThreadLocalUtil;

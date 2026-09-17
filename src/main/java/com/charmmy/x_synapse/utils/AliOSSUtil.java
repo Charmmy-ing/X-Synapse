@@ -3,12 +3,15 @@ import com.aliyun.sdk.service.oss2.OSSClient;
 import com.aliyun.sdk.service.oss2.OSSClientBuilder;
 import com.aliyun.sdk.service.oss2.credentials.StaticCredentialsProvider;
 import com.aliyun.sdk.service.oss2.models.*;
-import com.aliyun.sdk.service.oss2.paginator.ListBucketsIterable;
-
+import com.aliyun.sdk.service.oss2.transport.BinaryData;
 import java.io.InputStream;
+import org.springframework.stereotype.Component;
 
+@Component
+// 阿里云OSS工具类
 public class AliOSSUtil {
     static String  REGION = "cn-beijing";
+    static String BUCKET_NAME = "Big-Event-cnlu";
     static String ACCESS_KEY_ID = "";
     static String ACCESS_KEY_SECRET = "";
     public String uploadFile(String objectName, InputStream inputStream) {
@@ -21,25 +24,17 @@ public class AliOSSUtil {
                 .region(REGION);
            String url = "";
         try (OSSClient client = clientBuilder.build()) {
-                url = "https://" + objectName + ".oss-cn-beijing.aliyuncs.com";
-            ListBucketsIterable paginator = client.listBucketsPaginator(
-                    ListBucketsRequest.newBuilder()
-                            .build());
-
-            for (ListBucketsResult result : paginator) {
-                for (BucketSummary info : result.buckets()) {
-                    System.out.printf("bucket: name:%s, region:%s, storageClass:%s\n", info.name(), info.region(), info.storageClass());
-                }
-            }
-
-            return url;
+                url = "https://" + BUCKET_NAME + ".oss-cn-beijing.aliyuncs.com/"+objectName;
+            PutObjectRequest request = PutObjectRequest.newBuilder()
+                    .bucket(BUCKET_NAME)
+                    .key(objectName)
+                    .body(BinaryData.fromStream(inputStream, null))
+                    .build();
+            client.putObject(request);
+            System.out.println("上传成功");
         } catch (Exception e) {
-//            ServiceException se = ServiceException.asCause(e);
-//            if (se != null) {
-//                System.out.printf("ServiceException: requestId:%s, errorCode:%s\n", se.requestId(), se.errorCode());
-//            }
             System.out.printf("error:\n%s", e);
         }
-       return null;
+        return url;
     }
 }
