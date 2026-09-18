@@ -13,6 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Map;
 
+//登录权限的拦截器
 @Component
 public class LoginIntercepter implements HandlerInterceptor {
     @Autowired

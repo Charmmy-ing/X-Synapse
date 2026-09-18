@@ -1,6 +1,9 @@
 package com.charmmy.x_synapse.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.charmmy.x_synapse.DTO.UserDTO;
 import com.charmmy.x_synapse.mapper.UserMapper;
 import com.charmmy.x_synapse.pojo.Result;
 import com.charmmy.x_synapse.pojo.User;
@@ -23,34 +26,37 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    private StringRedisTemplate StringRedisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public String findUserByUsername(String username,String password)  {
+    public Result<String> findUserByUsername(String username,String password)  {
         //1.根据用户名查询用户
         LambdaQueryWrapper<User> Wrapper = new LambdaQueryWrapper<>();
         Wrapper.eq(User::getUsername,username);
         User user=userMapper.selectOne(Wrapper);
-
             if (user == null) {
-               throw new RuntimeException("用户名不存在");
+               return Result.error("用户名不存在");
             }
             if (!Md5Util.getMD5String(password).equals(user.getPassword())) {
                 //测试打印出查询到的用户名和密码的，查看是否与数据库中的值一致
-    //            System.out.println(user.getUsername());
-    //            System.out.println(Md5Util.getMD5String(password));
-    //            System.out.println(user.getPassword());
-              throw new RuntimeException("登录失败");
+                return Result.error("登录失败");
             }
-
         //3.登录成功，返回jwt token
         Map<String, Object> map = new HashMap<>();
         map.put("username", user.getUsername());
         map.put("id", user.getId());
         String token = JwtUtil.genToken(map);
-         StringRedisTemplate.opsForValue()
-            .set("token", token,1, TimeUnit.HOURS);
-        return token;
+        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
+        //4.将token存储到redis中会有问题，redis用了StringRedisTemplate，只能存储字符串，所以需要将token转换为字符串存储到redis中
+        Map<String,Object> userMap = BeanUtil.beanToMap(userDTO,new HashMap<>(),
+                CopyOptions.create()
+                        .setIgnoreNullValue(true)
+                        .setFieldValueEditor((fieldName,fieldValue) -> fieldValue.toString()));
+
+        stringRedisTemplate.opsForHash().putAll("token", userMap);
+        //还有一个问题就是如果用户访问了不需要登录的接口，就不会一直刷新token，导致token过期后，用户无法访问接口
+        stringRedisTemplate.expire("token" ,30, TimeUnit.MINUTES);
+        return Result.success(token);
     }
 
     @Override
@@ -96,7 +102,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result updateUserpassword(Map<String, String> map) {
-        String oldPassword=map.get("oldPassword");String new_Password=map.get("newPassword");String rePassword=map.get("rePassword");
+        String oldPassword=map.get("oldPassword");
+        String new_Password=map.get("newPassword");
+        String rePassword=map.get("rePassword");
         Map<String,String> usermap= ThreadLocalUtil.get();
         String username=usermap.get("username");
         LambdaQueryWrapper<User> Wrapper = new LambdaQueryWrapper<>();
@@ -114,7 +122,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(newPassword);
         user.setUpdateTime(LocalDateTime.now());
         userMapper.update(user,Wrapper);
-        StringRedisTemplate.delete("token");
+        stringRedisTemplate.delete("token");
         return Result.success("密码更新成功");
     }
 }

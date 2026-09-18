@@ -50,10 +50,9 @@ public class UserController {
 
     //登录
     @PostMapping("/login")
-    public Result login(@Pattern(regexp = "^[a-zA-Z0-9]{5,16}$") String username
+    public void login(@Pattern(regexp = "^[a-zA-Z0-9]{5,16}$") String username
             , @Pattern(regexp = "^[a-zA-Z0-9]{5,16}$") String password) {
-        String token = userService.findUserByUsername(username,password);
-        return Result.success(token);
+              userService.findUserByUsername(username,password);
     }
 
     //获取用户信息
