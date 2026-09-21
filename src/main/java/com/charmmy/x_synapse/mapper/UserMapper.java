@@ -1,5 +1,6 @@
 package com.charmmy.x_synapse.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.charmmy.x_synapse.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -7,7 +8,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 @Mapper
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
+
     @Select("select * from x_synapse.user where username = #{username}")
     User selectByUsername(String username);
     @Insert("insert into x_synapse.user(username,password,create_time,update_time) values(#{username},#{Password},now(),now())")
@@ -20,4 +22,5 @@ public interface UserMapper {
     void updatePassword(String username, String password);
     @Select("select * from x_synapse.user where username = #{username}")
     User selectById(String username);
+
 }
