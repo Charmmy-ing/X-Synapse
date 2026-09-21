@@ -50,10 +50,9 @@ public class UserController {
 
     //登录
     @PostMapping("/login")
-    public Result login(@Pattern(regexp = "^[a-zA-Z0-9]{5,16}$") String username
+    public void login(@Pattern(regexp = "^[a-zA-Z0-9]{5,16}$") String username
             , @Pattern(regexp = "^[a-zA-Z0-9]{5,16}$") String password) {
-        String token = userService.findUserByUsername(username,password);
-        return Result.success(token);
+              userService.findUserByUsername(username,password);
     }
 
     //获取用户信息
@@ -69,8 +68,8 @@ public class UserController {
     //更新用户信息
     @PutMapping("/update")
     //将请求体中的json格式转换为User对象
-    public Result updateUserInfo(@RequestBody @Validated User user) {
-        userService.updateUserInfo(user);
+    public Result updateUserInfo(@RequestBody @Validated User updateUser) {
+        userService.updateUserInfo(updateUser);
         return Result.success();
     }
     //更新用户头像

@@ -15,9 +15,10 @@ Spring:
           max-idle: 10
           min-idle: 0
           max-wait: 100
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-
-
+#配置MybatisPlus日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

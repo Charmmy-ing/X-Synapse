@@ -1,11 +1,14 @@
 package com.charmmy.x_synapse.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.charmmy.x_synapse.mapper.PostMapper;
 import com.charmmy.x_synapse.DTO.PostDTO;
+import com.charmmy.x_synapse.mapper.UserMapper;
 import com.charmmy.x_synapse.pojo.PageBean;
+import com.charmmy.x_synapse.pojo.Post;
 import com.charmmy.x_synapse.service.PostService;
 import com.charmmy.x_synapse.utils.ThreadLocalUtil;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +23,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void addPost(PostDTO post) {
-        postMapper.addPost(post);
+        postMapper.insert(post);
     }
 
-    @Override
+  /*  @Override
     public PageBean<PostDTO> getPostPage(Integer pageNum, Integer pageSize) {
         //创建分页对象来存储查询结果
         PageBean<PostDTO> pageBean = new PageBean<>();
@@ -39,5 +42,11 @@ public class PostServiceImpl implements PostService {
         pageBean.setTotal(page.getTotal());
         pageBean.setItems(page.getResult());
         return pageBean;
+   */
+    @Override
+    public List<PostDTO> getPostByUserId(Integer pageNum, Integer pageSize) {
+        IPage page = new Page(pageNum, pageSize);
+        postMapper.selectPage(page, null);
+        return page.getRecords();
     }
 }
