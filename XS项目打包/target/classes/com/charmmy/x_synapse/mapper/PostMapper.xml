@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.charmmy.x_synapse.mapper.PostMapper">
+
+    <select id="list" resultType="com.charmmy.x_synapse.pojo.DTO.PostDTO">
+        select * from post
+        <where>
+            user_id = #{userId}
+        </where>
+    </select>
+
+</mapper>
